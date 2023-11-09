@@ -22,16 +22,28 @@ function displayLibrary() {
         
         const content = document.createElement("div");
         content.classList.add("content");
-        content.textContent = `${Book.title} ${Book.author} ${Book.pages}`;
+        content.innerHTML = `
+            <div>Title: ${Book.title}</div>
+            <div>Author: ${Book.author}</div>
+            <div>Pages: ${Book.pages}</div>
+        `;
+        //content.textContent = `${Book.title} ${Book.author} ${Book.pages}`;
+
+        if (Book.read) {
+            content.classList.add("read");
+        }   else {
+            content.classList.add("not-read");
+        }
 
         const readButton = document.createElement("button");
         readButton.id = "toggleButton";
         readButton.classList.add("readButton");
+        readButton.textContent = "Change Read Status";
 
 
         const deleteButton = document.createElement("button");
         deleteButton.classList.add("deleteButton");
-        deleteButton.textContent = "Delete";
+        //deleteButton.textContent = "Delete";
         deleteButton.dataset.index = i;
 
         deleteButton.addEventListener("click", function() {
@@ -40,11 +52,33 @@ function displayLibrary() {
             displayLibrary();
         });
 
-        content.appendChild(deleteButton);
         content.appendChild(readButton);
+        content.appendChild(deleteButton);
         containerElement.appendChild(content);
     }
 }
+
+function toggleReadStatus(index) {
+    const content = document.querySelectorAll(".content")[index];
+    const book = myLibrary[index];
+
+    if (book.read) {
+        content.classList.remove("read");
+        content.classList.add("not-read");
+        book.read = false;
+    }   else {
+        content.classList.remove("not-read");
+        content.classList.add("read");
+        book.read = true;
+    }
+}
+
+containerElement.addEventListener("click", function(event) {
+    if (event.target.classList.contains("readButton")) {
+        const index = Array.from(event.target.parentNode.parentNode.children).indexOf(event.target.parentNode);
+        toggleReadStatus(index);
+    }
+});
 
 const dialog = document.querySelector("dialog");
 const showButton = document.querySelector("dialog + button");
